@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx">
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	
+	<fx:Declarations>
+		<!-- Data model stores registration data that user enters. -->
+		<fx:Model id="model">
+			<country>
+				<name>{countryname.text}</name>
+				<email>{email.text}</email>
+				<code>{code.text}</code>
+				<rate>{rate.value}</rate>
+			</country>
+		</fx:Model>
+		
+		<mx:StringValidator trigger="{saveOrUpdate}" triggerEvent="click" source="{model}" property="name" id="v_name" listener="{countryname}" />
+		<mx:EmailValidator 	trigger="{saveOrUpdate}" triggerEvent="click" source="{model}" property="email" id="v_mail" listener="{email}" />
+		<mx:StringValidator	trigger="{saveOrUpdate}" triggerEvent="click" source="{model}" property="code" id="v_code" listener="{code}" />
+		<mx:NumberValidator trigger="{saveOrUpdate}" triggerEvent="click" source="{model}" property="rate" id="v_rate" listener="{rate}" />
+
+	</fx:Declarations>
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import com.bi.mock.dataMock;
+			
+			public var mock:dataMock = new dataMock();
+			
+			[Bindable]
+			public var countries:ArrayCollection = mock.getCountries();
+
+			[Bindable]
+			public var selected:Boolean = false;
+			[Bindable]
+			public var saveActionLabel:String = "Create";
+
+		]]>
+		<![CDATA[ 
+			import spark.components.Grid;
+			import spark.events.GridSelectionEvent; 
+			import spark.events.GridSortEvent;
+			import mx.controls.Alert;
+			import mx.validators.Validator;
+			import mx.events.ListEvent;
+			
+			
+			private function selectionChange(event:ListEvent):void{
+				resetFormError();
+				selected = dataGrid.selectedIndex >-1 ? true : false;
+				setActionLabel();
+			}	
+			
+			private function setActionLabel():void {
+				selected ? saveActionLabel="Update" : saveActionLabel="Create";
+			}
+			
+			private function saveOrUpdateRow():void {
+				var validators:Array = Validator.validateAll([v_name,v_code,v_rate,v_mail]);
+				if(!validators.length) {
+					if (!selected) {
+						countries.addItem({name:model.name,code:model.code,email:model.email,rate:model.rate});		
+					} else {
+						var obj:Object = countries.getItemAt(dataGrid.selectedIndex);
+						obj.name = model.name;
+						obj.code = model.code;
+						obj.email = model.email;
+						obj.rate = model.rate;
+						countries.refresh();
+					}
+				}
+			} 
+			private function deleteRow(event:MouseEvent):void { 
+                countries.removeItemAt(dataGrid.selectedIndex);
+				resetForm();
+			}
+			private function resetForm():void {
+				countryname.text = "";
+				code.text = "";
+				email.text = "";
+				rate.value = 0;
+				this.selected = false;
+				resetFormError();
+				setActionLabel();
+			}
+			private function resetFormError():void {
+				countryname.errorString = "";
+				code.errorString = "";
+				email.errorString = "";
+				rate.errorString = "";
+			}
+		]]>
+	</fx:Script>
+
+	<s:BorderContainer width="830" height="550" id="mainContainer" styleName="container">		
+		<s:VGroup width="828" height="546" horizontalAlign="center" verticalAlign="middle">
+			<s:Panel id="dataGridPanel" y="23" width="812" height="240" title="Using DataGrid">
+				<s:layout>
+					<s:VerticalLayout gap="10" verticalAlign="middle" horizontalAlign="center"/>
+				</s:layout>		
+				<mx:AdvancedDataGrid id="dataGrid" width="810" height="156" sortExpertMode="true" dataProvider="{countries}" change="selectionChange(event)">
+					<mx:columns>
+						<mx:AdvancedDataGridColumn dataField="code" headerText="ISO"  />
+						<mx:AdvancedDataGridColumn dataField="name" headerText="Country" />
+						<mx:AdvancedDataGridColumn dataField="rate" headerText="Rate" editable="true" />
+						<mx:AdvancedDataGridColumn dataField="email" headerText="Embassy email" />
+					</mx:columns>
+				</mx:AdvancedDataGrid>
+				<s:HGroup width="60%">
+					<s:Label text="Code :"/> 
+					<s:Label text="{dataGrid.selectedItem.code}" fontWeight="bold"/>
+					<s:Label text="Country :"/> 
+					<s:Label text="{dataGrid.selectedItem.name}" fontWeight="bold"/>
+					<s:Label text="Rate :"/> 
+					<s:Label text="{dataGrid.selectedItem.rate}" fontWeight="bold"/>
+					<s:Label text="Embassy email :"/> 
+					<s:Label text="{dataGrid.selectedItem.email}" fontWeight="bold"/>
+				</s:HGroup>
+			</s:Panel>
+			<s:Form>
+				<s:FormItem label="Country Name" required="true">
+					<s:TextInput id="countryname" width="200" text="{dataGrid.selectedItem.name}"/>
+				</s:FormItem>
+				<s:FormItem width="341" label="Code" required="true">
+					<s:TextInput id="code" width="200" text="{dataGrid.selectedItem.code}"/>
+				</s:FormItem>
+				<s:FormItem width="340" label="Rate" required="true">
+					<s:NumericStepper id="rate" width="200" value="{dataGrid.selectedItem.rate}" minimum="0" maximum="9999" />
+				</s:FormItem>
+				<s:FormItem width="339" label="Embassy Email" required="true">
+					<s:TextInput id="email" width="200" text="{dataGrid.selectedItem.email}"/>
+				</s:FormItem>
+
+				<s:Button id="saveOrUpdate" label="{saveActionLabel}" click="saveOrUpdateRow()" />
+				<s:Button id="delete" label="Delete" click="deleteRow(event)" visible="{selected}"/>
+			</s:Form>
+			<s:Label text="{model.name} - {model.code} - {model.rate} (Embassy email: {model.email})"/>
+		</s:VGroup>	 
+		
+	</s:BorderContainer>	
+	
+</s:Application>
