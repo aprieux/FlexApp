@@ -1,6 +1,5 @@
 FlexApp
 =======
 
-A shitty flex application
 
-Master test
+A shitty flex application.
