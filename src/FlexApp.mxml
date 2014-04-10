@@ -27,8 +27,8 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.bi.mock.dataMock;			
 			import mx.collections.ArrayCollection;
-			import com.bi.mock.dataMock;
 			
 			public var mock:dataMock = new dataMock();
 			
@@ -46,7 +46,8 @@
 			import mx.events.ListEvent;
 			
 			
-			private function selectionChange(event:ListEvent):void{
+			private function selectionChange(event:ListEvent):void {
+				trace("SelectionChange()");
 				resetFormError();
 				selected = dataGrid.selectedIndex >-1 ? true : false;
 				setActionLabel();
@@ -93,13 +94,13 @@
 		]]>
 	</fx:Script>
 
-	<s:BorderContainer width="830" height="550" id="mainContainer" styleName="container">		
-		<s:VGroup width="828" height="546" horizontalAlign="center" verticalAlign="middle">
-			<s:Panel id="dataGridPanel" y="23" width="812" height="240" title="Using DataGrid">
+	<s:BorderContainer width="830" height="699" id="mainContainer" styleName="container">		
+		<s:VGroup width="828" height="697" horizontalAlign="center" verticalAlign="middle">
+			<s:Panel id="dataGridPanel" y="11" width="812" height="386" title="Using DataGrid">
 				<s:layout>
 					<s:VerticalLayout gap="10" verticalAlign="middle" horizontalAlign="center"/>
 				</s:layout>		
-				<mx:AdvancedDataGrid id="dataGrid" width="810" height="156" sortExpertMode="true" dataProvider="{countries}" change="selectionChange(event)">
+				<mx:AdvancedDataGrid id="dataGrid" width="810" height="333" sortExpertMode="true" dataProvider="{countries}" change="selectionChange(event)">
 					<mx:columns>
 						<mx:AdvancedDataGridColumn dataField="code" headerText="ISO"  />
 						<mx:AdvancedDataGridColumn dataField="name" headerText="Country" />
@@ -107,7 +108,7 @@
 						<mx:AdvancedDataGridColumn dataField="email" headerText="Embassy email" />
 					</mx:columns>
 				</mx:AdvancedDataGrid>
-				<s:HGroup width="60%">
+				<s:HGroup width="60%" height="20">
 					<s:Label text="Code :"/> 
 					<s:Label text="{dataGrid.selectedItem.code}" fontWeight="bold"/>
 					<s:Label text="Country :"/> 
