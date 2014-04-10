@@ -32,13 +32,9 @@
 			
 			public var mock:dataMock = new dataMock();
 			
-			[Bindable]
-			public var countries:ArrayCollection = mock.getCountries();
-
-			[Bindable]
-			public var selected:Boolean = false;
-			[Bindable]
-			public var saveActionLabel:String = "Create";
+			[Bindable] public var countries:ArrayCollection = mock.getCountries();
+			[Bindable] public var selected:Boolean = false;
+			[Bindable] public var saveActionLabel:String = "Create";
 
 		]]>
 		<![CDATA[ 
@@ -135,7 +131,6 @@
 				<s:FormItem width="339" label="Embassy Email" required="true">
 					<s:TextInput id="email" width="200" text="{dataGrid.selectedItem.email}"/>
 				</s:FormItem>
-
 				<s:Button id="saveOrUpdate" label="{saveActionLabel}" click="saveOrUpdateRow()" />
 				<s:Button id="delete" label="Delete" click="deleteRow(event)" visible="{selected}"/>
 			</s:Form>
